@@ -1,0 +1,263 @@
+// =============================================================================
+// Functions
+// =============================================================================
+
+// Strips the unit from any number
+// @param number $number
+@function strip-units($number) {
+	@return $number / ($number * 0 + 1);
+}
+
+
+// =============================================================================
+// Mixins
+// =============================================================================
+
+@mixin border-image ($val) {
+	@each $prefix in -webkit-, -moz-, -o-, '' {
+		#{$prefix}border-image: $val;
+	}
+}
+
+// No prefix needed unless < 2.1 Android and < 3.2 iOS
+// so this mixin is not really needed anymore
+@mixin border-radius ($val) {
+	@each $prefix in '' {
+		#{$prefix}border-radius: $val;
+	}
+}
+
+@mixin box-shadow ($val...) {
+	@each $prefix in -webkit-, '' {
+		#{$prefix}box-shadow: $val;
+	}
+}
+
+@mixin box-sizing ($val) {
+	@each $prefix in -webkit-, -moz-, '' {
+		#{$prefix}box-sizing: $val;
+	}
+}
+
+@mixin column-count ($val) {
+	@each $prefix in -webkit-, -moz-, '' {
+		#{$prefix}column-count: $val;
+	}
+}
+
+@mixin column-gap ($val) {
+	@each $prefix in -webkit-, -moz-, '' {
+		#{$prefix}column-gap: $val;
+	}
+}
+
+@mixin column-width ($val) {
+	@each $prefix in -webkit-, -moz-, '' {
+		#{$prefix}column-width: $val;
+	}
+}
+
+// Creates px fallback for rem unit
+// @param number $val if unitless is considered as in px
+// @param number $base unitless or in px
+@mixin font-size ($val, $base: 16) {
+	$base: strip-units($base);
+	@if (unit($val) == "px" or unit($val) == "") { 
+		$val: strip-units($val);
+		font-size: #{$val}px;
+		font-size: #{$val / $base}rem;
+	}
+	@else if (unit($val) == "rem") {
+		$val: strip-units($val);
+		font-size: #{$val * $base}px;
+		font-size: #{$val}rem;
+	}
+	@else {
+		font-size: $val;
+	}
+}
+
+// Stylizes placeholder text in inputs
+// Each selector has its own rules because when a browser doesn’t understand
+// a selector, it invalidates the entire line of selectors
+@mixin placeholder ($par: "&") {
+	@each $prefix in "::-webkit-input-", ":-moz-", ":-ms-input-" {
+		#{$par}#{$prefix}placeholder {
+			@content;
+		}
+	}
+}
+
+@mixin transition ($val...) {
+	@each $prefix in -webkit-, -moz-, -o-, '' {
+		#{$prefix}transition: $val;
+	}
+}
+
+@mixin transform ($val) {
+	@each $prefix in -webkit-, -moz-, -ms-, -o-, '' {
+		#{$prefix}transform: $val;
+	}
+}
+
+// Clearfix method to clear floats
+@mixin clearfix {
+	&:before, &:after { content: ""; display: table; }
+	&:after { clear: both; }
+	//*zoom: 1;// for IE6/7 only
+}
+%clearfix {
+	@include clearfix;
+}
+
+// Image replacement
+@mixin ir {
+	background-color: transparent;
+	background-repeat: no-repeat;
+	border: 0;
+	color: transparent;
+	display: block;
+	font: 0/0 a;
+	text-shadow: none;
+}
+%ir {
+	@include ir;
+}
+
+// Semi-transparent background with fallback
+@mixin bg-rgba ($color, $a) {
+	background-color: $color;
+	background-color: rgba($color, $a);
+}
+
+@mixin font-face($name, $url, $weight: normal, $style: normal, $original: $name) {
+	@font-face {
+		/*font-family: '#{$original}';*/
+		font-family: $name;
+		src: url('#{$url}.eot');
+		src: url('#{$url}.eot?#iefix') format('embedded-opentype'),
+		     url('#{$url}.woff') format('woff'),
+		     url('#{$url}.ttf') format('truetype'),
+		     url('#{$url}.svg##{$original}') format('svg');
+		font-weight: $weight;
+		font-style: $style;
+	}
+}
+
+// A selector with no pseudo-classes is added in case
+// the selector is not a link (eg: input button)
+@mixin link ($par: "&") {
+	#{$par}, #{$par}:link, #{$par}:visited, #{$par}:hover, #{$par}:focus, #{$par}:active {
+		@content;
+	}
+}
+
+@mixin link-hfa ($par: "&") {
+	#{$par}:hover, #{$par}:focus, #{$par}:active {
+		@content;
+	}
+}
+
+@mixin link-hf ($par: "&") {
+	#{$par}:hover, #{$par}:focus {
+		@content;
+	}
+}
+
+// Image sprite - works only if the pieces are in one row or column
+// @param number $_x background position x axis
+// @param number $_y background position y axis
+// @param number $_w background width
+// @param number $_h background height
+// @param number $_g gap between each image in the sprite
+// @param list $_list list of the sprite classes
+// @param string $_prefix prefix for the sprite classes
+@mixin sprite ($_x:0, $_y:0, $_w:0, $_h: 0, $_g:0, $_list: "", $_prefix: "") {
+	@each $item in $_list {
+		#{$_prefix}#{$item} {
+			background-position: $_x $_y;
+			$_x: $_x - $_w -$_g;
+		}
+	}
+}
+
+
+// =============================================================================
+// Media queries
+// =============================================================================
+
+// Media queries min-width
+// @param number $width min-width
+// @param number $ratio device pixel ratio
+@mixin mq-min ($width, $ratio: 1) {
+	@if $ratio > 1 {
+		@if $width > 0 {
+			@include mq-comment($width, $ratio);
+			@media only screen and (min-width: $width) and (-webkit-min-device-pixel-ratio: $ratio),
+			       only screen and (min-width: $width) and (min-resolution: #{$ratio * 96}dpi) {
+				@content;
+			}
+		}
+		@else {
+			@include mq-comment($width, $ratio);
+			@media (-webkit-min-device-pixel-ratio: $ratio),
+			       (min-resolution: #{$ratio * 96}dpi) {
+			    @content;
+			}
+		}
+	}
+	@else {
+		@include mq-comment($width, $ratio);
+		@media only screen and (min-width: $width) {
+			@content;
+		}
+	}
+}
+
+$fix-mqs: false !default;
+
+// Media queries min-width conditional: print mq for normal css and print its
+// content for non mq css only if its width is >= of the non mq layout
+// http://jakearchibald.github.com/sass-ie/
+// @param number $width min-width
+// @param number $ratio device pixel ratio
+@mixin mq-min-check ($width, $ratio: 1) {
+	@if $fix-mqs {
+		@if $fix-mqs >= $width and $ratio == 1 {
+				@content;
+		}
+	}
+	@else {
+		@include mq-min($width, $ratio) {
+			@content;
+		}
+	}
+}
+
+// iPhone landscape
+@mixin mq-iphone-l {
+	@if $fix-mqs == false {
+		/* iPhone landscape
+		   ========================================================================== */
+		@media only screen and (orientation: landscape) and (-webkit-min-device-pixel-ratio: 1.5) {
+			@content;
+		}
+	}
+}
+
+// iPhone portrait
+@mixin mq-iphone-p {
+	@if $fix-mqs == false {
+		/* iPhone portrait
+		   ========================================================================== */
+		@media only screen and (orientation: portrait) and (-webkit-min-device-pixel-ratio: 1.5) {
+			@content;
+		}
+	}
+}
+
+// Creates comment header for media queries
+@mixin mq-comment ($width, $ratio) {
+/* #{$width} #{$ratio}x
+   ========================================================================== */
+}
