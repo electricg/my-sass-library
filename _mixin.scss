@@ -81,7 +81,7 @@
 // Each selector has its own rules because when a browser doesn’t understand
 // a selector, it invalidates the entire line of selectors
 @mixin placeholder ($par: "&") {
-	@each $prefix in "::-webkit-input-", ":-moz-", ":-ms-input-" {
+	@each $prefix in "::-webkit-input-", "::-moz-", ":-ms-input-" {
 		#{$par}#{$prefix}placeholder {
 			@content;
 		}
