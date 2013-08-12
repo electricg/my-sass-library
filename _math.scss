@@ -1,0 +1,111 @@
+// Knowledge and inspiration taken from
+// http://japborst.net/blog/sass-sines-and-cosines.html
+
+
+$PI: 3.14159265359;
+
+// Strips the unit from any number.
+// @param number $number
+// @return number
+@function strip-units($number) {
+	@return $number / ($number * 0 + 1);
+}
+
+// Calculates the value of a number raised to the power of an exponent.
+// @param number $base
+// @param number $exp
+// @return number
+@function _pow($base, $exp) {
+	$value: $base;
+	@if $exp > 1 {
+		@for $i from 2 through $exp {
+			$value: $value * $base;
+		}
+	}
+	@if $exp < 1 {
+		@for $i from 0 through -$exp {
+			$value: $value / $base;
+		}
+	}
+	@return $value;
+}
+
+// Calculates the factorial of a number (the product of all positive integers less than or equal to the given number).
+// @param number $val
+// @return number
+@function fact($val) {
+	$value: 1;
+	@if $val > 0 {
+		@for $i from 1 through $val {
+			$value: $value * $i;
+		}
+	}
+	@return $value;
+}
+
+// Converts a number from degrees to radians.
+// @param number $angle
+// @return number
+@function deg2rad($angle) {
+	@return $angle / 180 * $PI;
+}
+
+// Degrees will first be converted to radians. If the number is any other unit or unitless, it will be treated as radians.
+@function _prep_angle($angle, $unit) {
+	$angle: strip-units($angle);
+	@if ($unit == "deg") {
+		$angle: deg2rad($angle);
+	}
+	// if the value is more than a full circle, it will be converted to its corrispondent below the full circle
+	@if ($angle > (2 * $PI)) {
+		$angle: $angle % (2 * $PI);
+	}
+	@return $angle;
+}
+
+// If the number is unitless or has a unit of deg then it will return a unitless result. If the number is any other unit, the units will be passed thru to the result.
+@function _return_angle($val, $unit) {
+	@if ($unit == "deg" or $unit == "") {
+		@return $val;
+	}
+	@else {
+		@return #{$val}#{$unit};
+	}
+}
+
+// Returns the sine of a number.
+@function _sin($angle) {
+	$sin: 0;
+	$unit: unit($angle);
+	$angle: _prep_angle($angle, $unit);
+	@for $n from 0 through 9 {
+		$sin: $sin + _pow(-1, $n) / fact(2 * $n + 1) * _pow($angle, (2 * $n + 1));
+	}
+	@return _return_angle($sin, $unit);
+}
+
+// Returns the cosine of a number.
+@function _cos($angle) {
+	$unit: unit($angle);
+	$angle: _prep_angle($angle, $unit);
+	$cos: _sin($PI / 2 - $angle);
+	@return _return_angle($cos, $unit);}
+
+// Returns the cosine of a number. Here the rounding is slighlty wrong.
+@function _cos_e($angle) {
+	$cos: 0;
+	$unit: unit($angle);
+	$angle: _prep_angle($angle, $unit);
+	@for $n from 0 through 9 {
+		$cos: $cos + _pow(-1, $n) / fact(2 * $n) * _pow($angle, 2 * $n);
+	}
+	@return _return_angle($cos, $unit);
+}
+
+// Returns the tangent of a number.
+@function _tan($angle) {
+	$unit: unit($angle);
+	$angle: _prep_angle($angle, $unit);
+	$tan: _sin($angle) / _cos($angle);
+	@return _return_angle($tan, $unit);
+}

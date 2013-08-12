@@ -1,6 +1,8 @@
 other
 *.debug.css
 *.txt
+*.css.map
+config.rb
 
 
 # Read about how to use .gitignore: http://h5bp.com/ae

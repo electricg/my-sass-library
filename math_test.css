@@ -1,0 +1,14 @@
+p {
+  content: "sin";
+  content: 180deg 0.0 0;
+  content: 210deg -0.5 -0.5;
+  content: 225deg -0.70711 -0.70711;
+  content: 240deg -0.86603 -0.86603;
+  content: 270deg -1.0 -1;
+  content: 300deg -0.86605 -0.86603;
+  content: 315deg -0.70717 -0.70711;
+  content: 330deg -0.50017 -0.5;
+  content: 360deg -0.00105 0;
+}
+
+/*@ sourceMappingURL=math_test.css.map */
