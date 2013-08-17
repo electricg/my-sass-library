@@ -1,64 +1,28 @@
 @import "math";
 
-$list_deg: 0, 1, 2, 4, 5, 6, 7, 8, 9, 10, 30, 45, 60, 90, 120, 135, 150, 180, 210, 225, 240, 270, 300, 315, 330, 360, 405;
-$sep: "---------------";
-$D: 10000000000;
+$list_deg: 0, 30, 45, 60, 90, 120, 135, 150, 180, 210, 225, 240, 270, 300, 315, 330, 360, 405;
 
-p {
-	content: "sin";
+.sin {
 	@each $v in $list_deg {
 		$v: $v * 1deg;
-		$a : round(_sin($v) * $D) / $D;
-		$b: round(sin($v) * $D) / $D;
-		// content: type-of($a);
-		// content: type-of($b);
-		@if ($a != $b) {
-			content: $v $a $b;
-		}
+		vanilla: $v _sin($v);
+		compass: $v sin($v);
 	}
-	// content: $sep;
-	// @each $v in $list_deg {
-	// 	content: $v _sin($v);
-	// 	content: $v sin($v);
-	// }
-	// content: $sep;
+}
 
-	// content: "cos";
-	// @each $v in $list_deg {
-	// 	$v: $v * 1deg;
-	// 	content: $v _cos($v);
-	// 	content: $v cos($v);
-	// }
-	// content: $sep;
-	// @each $v in $list_deg {
-	// 	content: $v _cos($v);
-	// 	content: $v cos($v);
-	// }
-	// content: $sep;
+.cos {
+	@each $v in $list_deg {
+		$v: $v * 1deg;
+		vanilla: $v _cos($v);
+		vanillb: $v _cos_e($v);
+		compass: $v cos($v);
+	}
+}
 
-	// content: "cos_e";
-	// @each $v in $list_deg {
-	// 	$v: $v * 1deg;
-	// 	content: $v _cos_e($v);
-	// 	content: $v cos($v);
-	// }
-	// content: $sep;
-	// @each $v in $list_deg {
-	// 	content: $v _cos_e($v);
-	// 	content: $v cos($v);
-	// }
-	// content: $sep;
-
-	// content: "tan";
-	// @each $v in $list_deg {
-	// 	$v: $v * 1deg;
-	// 	content: $v _tan($v);
-	// 	content: $v tan($v);
-	// }
-	// content: $sep;
-	// @each $v in $list_deg {
-	// 	content: $v _tan($v);
-	// 	content: $v tan($v);
-	// }
-	// content: $sep;
+.tan {
+	@each $v in $list_deg {
+		$v: $v * 1deg;
+		vanilla: $v _tan($v);
+		compass: $v tan($v);
+	}
 }
