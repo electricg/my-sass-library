@@ -132,15 +132,15 @@
 
 @mixin font-face($name, $url, $weight: normal, $style: normal, $original: $name) {
 	@font-face {
-		/*font-family: '#{$original}';*/
+		/* #{$original} */
 		font-family: $name;
 		src: url('#{$url}.eot');
 		src: url('#{$url}.eot?#iefix') format('embedded-opentype'),
 		     url('#{$url}.woff') format('woff'),
 		     url('#{$url}.ttf') format('truetype'),
 		     url('#{$url}.svg##{$original}') format('svg');
-		font-weight: $weight;
-		font-style: $style;
+		font-weight: #{$weight};
+		font-style: #{$style};
 	}
 }
 
