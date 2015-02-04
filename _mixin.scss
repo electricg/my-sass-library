@@ -88,6 +88,17 @@
 	}
 }
 
+// Remove text-shadow in selection highlight:
+// https://twitter.com/miketaylr/status/12228805301
+// These selection rule sets have to be separate.
+@mixin selection () {
+	@each $prefix in -moz-, '' {
+		::#{$prefix}selection {
+			@content;
+		}
+	}
+}
+
 @mixin transition ($val...) {
 	@each $prefix in -webkit-, -moz-, -o-, '' {
 		#{$prefix}transition: $val;
